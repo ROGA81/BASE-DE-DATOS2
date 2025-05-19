@@ -1,0 +1,229 @@
+# Estructura del proyecto Frutalia
+
+```
+Frutalia/
+│
+├── index.html
+├── css/
+│   └── styles.css
+├── js/
+│   └── script.js
+└── apps-script/
+    └── Code.gs
+```
+
+---
+
+## 1. `apps-script/Code.gs`
+```javascript
+// Vinculación Apps Script para Google Sheets "BASE DE DATOS"
+function doPost(e) {
+  var sheet = SpreadsheetApp.getActiveSpreadsheet().getSheetByName("BASE DE DATOS");
+  var nombre    = e.parameter["Nombre del cliente"];
+  var telefono  = e.parameter["Teléfono"];
+  var sabor     = e.parameter["Sabor del jugo"];
+  var tamano    = e.parameter["Tamaño"];
+  var comentarios = e.parameter["Comentarios adicionales"];
+  sheet.appendRow([new Date(), nombre, telefono, sabor, tamano, comentarios]);
+  return ContentService.createTextOutput("Pedido recibido con éxito.");
+}
+```
+> **URL de despliegue Apps Script**:
+> `https://script.google.com/macros/s/AKfycbyYytxOQGb7B0c5xwJYfF63kK-rmGJEQ_tC8X8JBYACm_zsrFAzDxelwNwhlzo1lPyG4A/exec`
+
+## 2. `index.html`
+```html
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Frutalia | Pedidos en línea</title>
+  <link rel="stylesheet" href="css/styles.css">
+  <script>
+    const APP_SCRIPT_URL =
+      "https://script.google.com/macros/s/AKfycbyYytxOQGb7B0c5xwJYfF63kK-rmGJEQ_tC8X8JBYACm_zsrFAzDxelwNwhlzo1lPyG4A/exec";
+    const SHEET_URL =
+      "https://docs.google.com/spreadsheets/d/1FHJY-GXrihXbnAFNSrzFesHaDJ-5-n_5xIDnqPMeOuc/edit?gid=0";
+  </script>
+</head>
+<body>
+  <main class="container">
+    <h1>Frutalia 🧃</h1>
+    <p>Realiza tu pedido y recógelo en solo 10 minutos</p>
+
+    <form id="pedidoForm">
+      <label for="nombre">Nombre del cliente:</label>
+      <input type="text" id="nombre" name="Nombre del cliente" required>
+
+      <label for="telefono">Teléfono:</label>
+      <input type="tel" id="telefono" name="Teléfono" required>
+
+      <label for="sabor">Sabor del jugo:</label>
+      <select id="sabor" name="Sabor del jugo" required>
+        <option value="naranja">Naranja</option>
+        <option value="mango">Mango</option>
+        <option value="fresa">Fresa</option>
+        <option value="piña">Piña</option>
+      </select>
+
+      <label for="tamano">Tamaño:</label>
+      <select id="tamano" name="Tamaño" required>
+        <option value="chico">Chico</option>
+        <option value="mediano">Mediano</option>
+        <option value="grande">Grande</option>
+      </select>
+
+      <label for="comentarios">Comentarios adicionales:</label>
+      <textarea id="comentarios" name="Comentarios adicionales"></textarea>
+
+      <button type="submit">Enviar Pedido</button>
+      <p id="mensajeExito" class="exito">
+        Tu pedido ha sido enviado con éxito, pasa a recogerlo en 10 minutos.
+        ¡Frutalia agradece tu preferencia!
+      </p>
+    </form>
+
+    <section id="registros">
+      <h2>Pedidos registrados</h2>
+      <div id="listaPedidos">Cargando pedidos...</div>
+    </section>
+  </main>
+  <script src="js/script.js"></script>
+</body>
+</html>
+```
+
+## 3. `css/styles.css`
+```css
+body {
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  background: linear-gradient(to bottom, #fffce0, #ffe7b2);
+  margin: 0;
+  padding: 0;
+  color: #333;
+}
+.container {
+  max-width: 600px;
+  margin: auto;
+  padding: 2rem;
+  background: white;
+  border-radius: 15px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+}
+h1 {
+  text-align: center;
+  color: #ff6f00;
+  font-size: 2.5rem;
+  margin-bottom: 0.2rem;
+}
+p {
+  text-align: center;
+  color: #5a5a5a;
+  margin-bottom: 1.5rem;
+}
+form label {
+  display: block;
+  margin-top: 1rem;
+  font-weight: bold;
+}
+form input,
+form select,
+form textarea {
+  width: 100%;
+  padding: 10px;
+  margin-top: 0.3rem;
+  border: 2px solid #ffd54f;
+  border-radius: 8px;
+  box-sizing: border-box;
+  font-size: 1rem;
+}
+button[type="submit"] {
+  margin-top: 1.5rem;
+  width: 100%;
+  background-color: #ffb300;
+  border: none;
+  color: white;
+  padding: 12px;
+  font-size: 1.2rem;
+  font-weight: bold;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background-color 0.3s;
+}
+button[type="submit"]:hover {
+  background-color: #ffa000;
+}
+.exito {
+  margin-top: 1rem;
+  background-color: #c8e6c9;
+  color: #256029;
+  padding: 10px;
+  border: 1px solid #81c784;
+  border-radius: 8px;
+  display: none;
+  text-align: center;
+}
+.exito.visible {
+  display: block;
+}
+#registros {
+  margin-top: 2rem;
+}
+#registros h2 {
+  color: #388e3c;
+  font-size: 1.6rem;
+  border-bottom: 2px solid #a5d6a7;
+  padding-bottom: 0.5rem;
+}
+#listaPedidos {
+  margin-top: 1rem;
+  padding: 1rem;
+  background-color: #f1f8e9;
+  border-radius: 8px;
+  max-height: 300px;
+  overflow-y: auto;
+}
+```
+
+## 4. `js/script.js`
+```javascript
+// script.js: envío de formulario y obtención de registros
+document.addEventListener('DOMContentLoaded', () => {
+  const form = document.getElementById('pedidoForm');
+  const mensajeExito = document.getElementById('mensajeExito');
+  const listaPedidos = document.getElementById('listaPedidos');
+
+  form.addEventListener('submit', e => {
+    e.preventDefault();
+    const data = new URLSearchParams(new FormData(form));
+    fetch(APP_SCRIPT_URL, { method: 'POST', body: data })
+      .then(resp => resp.text())
+      .then(_ => {
+        mensajeExito.classList.add('visible');
+        form.reset();
+        cargarPedidos();
+        setTimeout(() => mensajeExito.classList.remove('visible'), 5000);
+      })
+      .catch(err => console.error('Error:', err));
+  });
+
+  function cargarPedidos() {
+    fetch(APP_SCRIPT_URL + '?action=get')
+      .then(resp => resp.json())
+      .then(datos => {
+        listaPedidos.innerHTML = '';
+        datos.forEach(row => {
+          const div = document.createElement('div');
+          div.textContent = `${row['Timestamp']} - ${row['Nombre del cliente']} (${row['Sabor del jugo']}, ${row['Tamaño']})`;
+          listaPedidos.appendChild(div);
+        });
+      })
+      .catch(_ => {
+        listaPedidos.textContent = 'No se pudieron cargar los pedidos.';
+      });
+  }
+
+  cargarPedidos();
+});
+```
